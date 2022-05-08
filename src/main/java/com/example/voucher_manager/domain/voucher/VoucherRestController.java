@@ -33,13 +33,13 @@ public class VoucherRestController {
     public ResponseEntity<List<VoucherDto>> findVouchers(@RequestParam Map<String, String> params) {
         if (params.isEmpty()) {
             List<VoucherDto> vouchers = voucherService.findAll().stream()
-                    .map(VoucherDto::from)
+                    .map(VoucherModelMapper::toDto)
                     .toList();
             return ResponseEntity.ok(vouchers);
         }
 
         var vouchers = findByQueryParams(params).stream()
-                .map(VoucherDto::from)
+                .map(VoucherModelMapper::toDto)
                 .toList();
         return ResponseEntity.ok(vouchers);
     }
@@ -59,7 +59,7 @@ public class VoucherRestController {
     public ResponseEntity<VoucherDto> findVoucher(@PathVariable("voucherId") UUID voucherId) {
         var voucher = voucherService.findVoucher(voucherId);
         if (voucher.isPresent()) {
-            var voucherDto = VoucherDto.from(voucher.get());
+            var voucherDto = VoucherModelMapper.toDto(voucher.get());
             return ResponseEntity.ok(voucherDto);
         }
         return ResponseEntity.notFound().build();
@@ -72,7 +72,7 @@ public class VoucherRestController {
                 VoucherType.of(createVoucherRequest.voucherType()),
                 createVoucherRequest.discountInfo());
 
-        return ResponseEntity.ok(VoucherDto.from(voucher));
+        return ResponseEntity.ok(VoucherModelMapper.toDto(voucher));
     }
 
     @DeleteMapping("/api/v1/voucher/{voucherId}")

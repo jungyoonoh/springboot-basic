@@ -7,21 +7,6 @@ public record VoucherDto(UUID voucherId, Long discountInfo,
                          VoucherType voucherType, UUID ownerId,
                          LocalDateTime createdAt) {
 
-    public static VoucherDto from(Voucher voucher) {
-        return new VoucherDto(voucher.getVoucherId(),
-                voucher.getDiscountInformation(),
-                voucher.getVoucherType(),
-                voucher.getOwnerId(),
-                voucher.getCreatedAt());
-    }
-
-    public static Voucher toEntity(VoucherDto voucherDto) {
-        if (voucherDto.getVoucherType().equals(VoucherType.FIXED)) {
-            return FixedAmountVoucher.of(voucherDto);
-        }
-        return PercentDiscountVoucher.of(voucherDto);
-    }
-
     public UUID getVoucherId() {
         return voucherId;
     }

@@ -24,7 +24,7 @@ public class VoucherViewController {
     @GetMapping("/vouchers")
     public String viewVouchersPage(Model model) {
         List<VoucherDto> convertObject = voucherService.findAll().stream()
-                .map(VoucherDto::from)
+                .map(VoucherModelMapper::toDto)
                 .toList();
         model.addAttribute("vouchers", convertObject);
         return "views/voucher/vouchers";
@@ -34,7 +34,7 @@ public class VoucherViewController {
     public String findVoucher(@PathVariable UUID voucherId, Model model) {
         var findVoucher = voucherService.findVoucher(voucherId);
         if (findVoucher.isPresent()) {
-            model.addAttribute("voucher", VoucherDto.from(findVoucher.get()));
+            model.addAttribute("voucher", VoucherModelMapper.toDto(findVoucher.get()));
             return "views/voucher/voucher-details";
         }
         return "views/error/404";
@@ -43,7 +43,7 @@ public class VoucherViewController {
     @PostMapping("/vouchers/{voucherId}")
     public String modifyVoucher(VoucherDto voucherDto) {
         logger.info("Got voucher data modify request {}", voucherDto);
-        voucherService.updateVoucher(VoucherDto.toEntity(voucherDto));
+        voucherService.updateVoucher(VoucherModelMapper.toEntity(voucherDto));
         return "redirect:/vouchers";
     }
 
