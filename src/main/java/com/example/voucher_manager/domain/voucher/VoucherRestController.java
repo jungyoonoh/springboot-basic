@@ -31,13 +31,6 @@ public class VoucherRestController {
     @GetMapping("/api/v1/vouchers")
     @ResponseBody
     public ResponseEntity<List<VoucherDto>> findVouchers(@RequestParam Map<String, String> params) {
-        if (params.isEmpty()) {
-            List<VoucherDto> vouchers = voucherService.findAll().stream()
-                    .map(VoucherModelMapper::toDto)
-                    .toList();
-            return ResponseEntity.ok(vouchers);
-        }
-
         var vouchers = findByQueryParams(params).stream()
                 .map(VoucherModelMapper::toDto)
                 .toList();
@@ -45,6 +38,10 @@ public class VoucherRestController {
     }
 
     private List<Voucher> findByQueryParams(Map<String, String> params) {
+        if (params.isEmpty()) {
+            return voucherService.findAll();
+        }
+
         if (params.containsKey(VoucherRequestParams.TYPE.getKey())){
             return voucherService.findSameTypeVoucher(VoucherType.of(params.get(VoucherRequestParams.TYPE.getKey())));
         }
